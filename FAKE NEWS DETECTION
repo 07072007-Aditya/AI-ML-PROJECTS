@@ -1,0 +1,66 @@
+# Step 1: Import libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Step 2: Create dataset
+data = pd.DataFrame({
+    'Text': [
+        "Breaking: Government announces new policy",
+        "Scientists discover new planet",
+        "New education reforms introduced",
+        "Stock market reaches new high",
+        "You won a million dollars click here",
+        "Earn money fast with this trick",
+        "Click here to win free gifts",
+        "Exclusive offer claim your prize now"
+    ],
+    'Label': [
+        "Real", "Real", "Real", "Real",
+        "Fake", "Fake", "Fake", "Fake"
+    ]
+})
+
+print("Dataset:\n", data)
+
+# Step 3: Features and target
+X = data['Text']
+y = data['Label']
+
+# Step 4: Convert text to numerical form (TF-IDF)
+vectorizer = TfidfVectorizer(stop_words='english')
+X_vectorized = vectorizer.fit_transform(X)
+
+# Step 5: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_vectorized, y, test_size=0.25, random_state=42
+)
+
+# Step 6: Train model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 7: Predictions
+y_pred = model.predict(X_test)
+
+# Step 8: Evaluation
+print("\nAccuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# Step 9: Test with custom inputs
+test_news = [
+    "Win money instantly by clicking here",
+    "Government launches new scheme for students"
+]
+
+test_vector = vectorizer.transform(test_news)
+predictions = model.predict(test_vector)
+
+print("\n--- Custom Predictions ---")
+for news, pred in zip(test_news, predictions):
+    print(f"News: {news}")
+    print(f"Prediction: {pred}\n")
