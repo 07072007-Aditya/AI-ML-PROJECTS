@@ -1,0 +1,43 @@
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+
+data = pd.DataFrame({
+    'Email_Text': [
+        "Win money now",
+        "Limited time offer",
+        "Hello friend how are you",
+        "Meeting at 5 pm",
+        "Claim your prize now",
+        "Let's have lunch tomorrow"
+    ],
+    'Label': [
+        "Spam",
+        "Spam",
+        "Not Spam",
+        "Not Spam",
+        "Spam",
+        "Not Spam"
+    ]
+})
+
+print("Dataset:\n", data)
+
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(data['Email_Text'])
+
+y = data['Label']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+test_email = ["Win a free iPhone now"]
+test_vector = vectorizer.transform(test_email)
+
+prediction = model.predict(test_vector)
+
+print("\nTest Email:", test_email[0])
+print("Prediction:", prediction[0])
